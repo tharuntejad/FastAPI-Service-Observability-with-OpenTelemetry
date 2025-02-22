@@ -1,4 +1,5 @@
 
+/.idea
 /docs
 /clickhouse-1/data_volumes
 /prometheus-loki-jaeger-grafana-1/data_volumes
