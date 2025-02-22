@@ -335,7 +335,12 @@ This document addressed the key challenges of integrating observability into Fas
     
 By following this guide, you can build a **robust, scalable, and cost-effective observability solution** for FastAPI services, ensuring better visibility, faster troubleshooting, and improved system reliability.
 
+
 ## References
 
-- Article: [https://clickhouse.com/blog/storing-traces-and-spans-open-telemetry-in-clickhouse](https://clickhouse.com/blog/storing-traces-and-spans-open-telemetry-in-clickhouse)
-- GitHub: [https://github.com/ClickHouse/opentelemetry-demo/tree/main](https://github.com/ClickHouse/opentelemetry-demo/tree/main)
+- **ClickHouse Official Integration Guide:**  
+  *Storing Traces and Spans with OpenTelemetry in ClickHouse* — [ClickHouse Blog Article](https://clickhouse.com/blog/storing-traces-and-spans-open-telemetry-in-clickhouse)
+
+- **Associated Git Repository:**  
+  *ClickHouse OpenTelemetry Demo* — [GitHub Repository](https://github.com/ClickHouse/opentelemetry-demo/tree/main)
+

@@ -265,6 +265,7 @@ For a production-grade implementation, consider:
 - Deploying separate Jaeger instances for collection and querying.
 
 If you're looking for an observability stack that's easy to set up, maintain, and cost-effective, consider the adjacent `clickhouse-1` project. Check out `clickhouse-1/readme.md` for more details.
+
 ## References
 
 - [OpenTelemetry Collector Configuration](https://opentelemetry.io/docs/collector/configuration/#basics)
