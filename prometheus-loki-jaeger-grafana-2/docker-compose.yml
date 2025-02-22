@@ -1,0 +1,165 @@
+services:
+  order-service:
+    build:
+      context: ../order-service/.
+      dockerfile: ../order-service/Dockerfile
+    ports:
+        - "8000:8000"
+    environment:
+      - APP_ENV=stage
+    depends_on:
+      - otel-collector
+
+  inventory-service:
+    build:
+      context: ../inventory-service/.
+      dockerfile: ../inventory-service/Dockerfile
+    ports:
+        - "8010:8010"
+    environment:
+      - APP_ENV=stage
+    depends_on:
+      - otel-collector
+
+  otel-collector:
+    image: otel/opentelemetry-collector:0.119.0
+
+    ports:
+      - "4317:4317"   # otel gRPC receiver for traces, logs, and metrics
+      # - "4318:4318"   # otel HTTP receiver for traces, logs, and metrics
+      # - "8888:8888" # Prometheus metrics exposed by the collector
+      - "8889:8889" # Prometheus exporter metrics
+      - "1888:1888" # pprof extension
+      - "13133:13133" # health_check extension
+      - "55679:55679" # zpages extension
+    volumes:
+      - ./config_volumes/otel-config.yaml:/etc/otel-config.yaml
+    command: ["--config", "/etc/otel-config.yaml"]
+    depends_on:
+      # - jaeger-all-in-one
+      - jaeger-collector
+      - prometheus
+      - loki
+
+  prometheus:
+    image: prom/prometheus:v3.1.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config_volumes/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./data_volumes/prometheus/data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+
+  loki:
+    image: grafana/loki:3.4.0
+
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./config_volumes/loki-config.yaml:/etc/loki/local-config.yaml
+      - ./data_volumes/loki/data:/loki
+
+    command: -config.file=/etc/loki/local-config.yaml
+    depends_on:
+      minio:
+        condition: service_healthy
+      create-bucket:
+        condition: service_completed_successfully
+
+  minio:
+    image: minio/minio:RELEASE.2025-02-07T23-21-09Z-cpuv1
+    ports:
+      - "9000:9000"  # S3 API
+      - "9001:9001"  # MinIO Console UI
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: password
+    volumes:
+      - ./data_volumes/minio/data:/data
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  create-bucket:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      sleep 10;
+      mc alias set local http://minio:9000 admin password;
+      mc mb local/loki;
+      mc policy set public local/loki;
+      exit 0;
+      "
+
+  # Run jaeger just as a collector uses jaeger-collector.yaml (strips out query extension)
+  jaeger-collector:
+    image: jaegertracing/jaeger:2.3.0
+    ports:
+      # - "4317:4317"    # receive otlp via grpc
+      - "4318:4318"      # receive otlp via http
+      # - "8888:8888"    # expose self metrics
+      # - "16686:16686"  # expose query ui
+    environment:
+      - LOG_LEVEL=debug
+    volumes:
+        - ./config_volumes/jaeger-collector.yaml:/etc/jaeger.yaml
+    command: ["--config", "/etc/jaeger.yaml"]
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
+  # Run jaeger just as a query service uses jaeger-query.yaml)
+  jaeger-query:
+    image: jaegertracing/jaeger:2.3.0
+    ports:
+      # - "4317:4317"  # receive otlp via grpc
+      # - "4318:4318"  # receive otlp via http
+      # - "8888:8888"  # expose self metrics
+      - "16686:16686"  # expose query ui
+
+    environment:
+      - LOG_LEVEL=debug
+
+    volumes:
+      - ./config_volumes/jaeger-query.yaml:/etc/jaeger.yaml
+      - ./config_volumes/jaeger-ui-config.json:/cmd/jaeger/config-ui.json
+    command: [ "--config", "/etc/jaeger.yaml" ]
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+    volumes:
+        - ./data_volumes/elasticsearch/data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  grafana:
+    image: grafana/grafana:11.5.1
+    ports:
+      - "3000:3000"
+    volumes:
+       - ./config_volumes/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+       - ./data_volumes/grafana/data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning

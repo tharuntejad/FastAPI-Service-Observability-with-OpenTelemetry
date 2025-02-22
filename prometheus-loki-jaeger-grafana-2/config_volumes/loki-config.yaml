@@ -1,0 +1,58 @@
+
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+
+common:
+  instance_addr: 127.0.0.1
+  path_prefix: /loki
+  replication_factor: 1
+  ring:
+    kvstore:
+      store: inmemory
+
+schema_config:
+  configs:
+  - from: 2020-10-24
+    store: tsdb
+    object_store: s3
+    schema: v13
+    index:
+      prefix: index_
+      period: 24h
+
+
+ruler:
+  alertmanager_url: http://localhost:9093
+
+analytics:
+  reporting_enabled: false
+
+storage_config:
+  tsdb_shipper:
+    active_index_directory: /loki/index
+    cache_location: /loki/index_cache
+    resync_interval: 1m
+  aws:
+    s3: s3://admin:password@minio:9000/loki
+    endpoint: http://minio:9000/loki
+    # region: ""
+    bucketnames: loki
+    access_key_id: admin
+    secret_access_key: password
+    s3forcepathstyle: true
+    insecure: true
+
+compactor:
+  working_directory: /loki/compactor
+  compaction_interval: 10m
+  retention_enabled: true
+  retention_delete_delay: 2h
+  retention_delete_worker_count: 2
+  delete_request_store: aws
+
+
+limits_config:
+  retention_period: 168h  # Retain logs for 7 days (168 hours)
+  deletion_mode: filter-and-delete

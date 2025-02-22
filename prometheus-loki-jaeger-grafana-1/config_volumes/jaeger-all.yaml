@@ -1,0 +1,72 @@
+
+extensions:
+  # Add healthcheck extension
+  healthcheckv2:
+    use_v2: true
+    http:
+
+  # Add / Configure badger(in memory key value store) for jaeger traces
+  jaeger_storage:
+    backends:
+      some_store:
+        badger:
+          directories:
+            keys: "/tmp/data/jaeger/"
+            values: "/tmp/data/jaeger/"
+          ephemeral: false
+      another_store:
+        badger:
+          directories:
+            keys: "/tmp/data/jaeger_archive/"
+            values: "/tmp/data/jaeger_archive/"
+          ephemeral: false
+
+  # Add jaeger query service
+  jaeger_query:
+    storage:
+      traces: some_store
+      traces_archive: another_store
+    ui:
+      config_file: ./cmd/jaeger/config-ui.json
+    # The maximum duration that is considered for clock skew adjustments.
+    # Defaults to 0 seconds, which means it's disabled.
+    max_clock_skew_adjust: 0s
+
+
+# Configure reciever to receive traces from otlp, currently only http is enabled
+receivers:
+  otlp:
+    protocols:
+      # grpc:
+      #  endpoint: "0.0.0.0:4317"
+      http:
+        endpoint: "0.0.0.0:4318"
+
+# Configure processor to batch traces
+processors:
+  batch:
+
+# Configure exporter to export traces to jaeger storage
+exporters:
+  # Send traces to jaeger storage
+  jaeger_storage_exporter:
+    trace_storage: some_store
+
+
+# Put it all together
+service:
+  extensions: [jaeger_storage, jaeger_query, healthcheckv2]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [jaeger_storage_exporter]
+  # Set jaeger telemetry
+  telemetry:
+    resource:
+      service.name: jaeger_as_all_in_one
+    metrics:
+      level: detailed
+      address: 0.0.0.0:8888
+    logs:
+      level: debug

@@ -1,0 +1,89 @@
+services:
+  order-service:
+    build:
+      context: ../order-service/.
+      dockerfile: ../order-service/Dockerfile
+    ports:
+        - "8000:8000"
+    environment:
+      - APP_ENV=stage
+    depends_on:
+      - otel-collector
+
+  inventory-service:
+    build:
+      context: ../inventory-service/.
+      dockerfile: ../inventory-service/Dockerfile
+    ports:
+        - "8010:8010"
+    environment:
+      - APP_ENV=stage
+    depends_on:
+      - otel-collector
+
+  otel-collector:
+    image: otel/opentelemetry-collector:0.119.0
+
+    ports:
+      - "4317:4317"   # otel gRPC receiver for traces, logs, and metrics
+      # - "4318:4318"   # otel HTTP receiver for traces, logs, and metrics
+      # - "8888:8888" # Prometheus metrics exposed by the collector
+      - "8889:8889" # Prometheus exporter metrics
+      - "1888:1888" # pprof extension
+      - "13133:13133" # health_check extension
+      - "55679:55679" # zpages extension
+    volumes:
+      - ./config_volumes/otel-config.yaml:/etc/otel-config.yaml
+    command: ["--config", "/etc/otel-config.yaml"]
+    depends_on:
+      - jaeger-all
+      - prometheus
+      - loki
+
+  prometheus:
+    image: prom/prometheus:v3.1.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config_volumes/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./data_volumes/prometheus/data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+
+  loki:
+    image: grafana/loki:3.4.0
+
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./config_volumes/loki-config.yaml:/etc/loki/local-config.yaml
+      - ./data_volumes/loki/data:/loki
+
+    command: -config.file=/etc/loki/local-config.yaml
+
+  jaeger-all:
+    image: jaegertracing/jaeger:2.3.0
+    ports:
+      # - "4317:4317"    # receive otlp via grpc
+      - "4318:4318"      # receive otlp via http
+      # - "8888:8888"    # expose self metrics
+      - "16686:16686"  # expose query ui
+    environment:
+      - LOG_LEVEL=debug
+    volumes:
+      - ./config_volumes/jaeger-all.yaml:/etc/jaeger.yaml
+      - ./config_volumes/jaeger-ui-config.json:/cmd/jaeger/config-ui.json
+      - ./data_volumes/jaeger/data:/tmp/data
+    command: ["--config", "/etc/jaeger.yaml"]
+
+  grafana:
+    image: grafana/grafana:11.5.1
+    ports:
+      - "3000:3000"
+    volumes:
+       - ./config_volumes/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+       - ./data_volumes/grafana/data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning

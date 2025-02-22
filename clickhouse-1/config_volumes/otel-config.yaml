@@ -1,0 +1,82 @@
+
+# visit https://www.otelbin.io/ for validating the config
+
+receivers:
+  # Prometheus to scrape metrics from otel-collector itself
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'otel-collector'
+          static_configs:
+            - targets: ["0.0.0.0:8888"]
+  # Receive metrics, traces, and log via grpc and http
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:4317"
+      http:
+        endpoint: "0.0.0.0:4318"
+
+
+processors:
+  # Process metrics,log,traces in batch with a timeout of 1s
+  batch:
+    timeout: 1s
+
+  # Limit memory usage to 400MiB with a spike limit of 100MiB
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 400
+    spike_limit_mib: 100
+
+  # Add a severity_text attribute to log/ used later by loki for log retention policy
+  attributes:
+    actions:
+      - key: severity
+        from_attribute: severity_text
+        action: insert
+
+# [otlp otlphttp file opencensus prometheus zipkin debug nop kafka prometheusremotewrite]
+exporters:
+  # Print the output of the pipeline to stdout
+  debug:
+    verbosity: detailed
+
+  # Export metrics, traces, and logs to clickhouse
+  clickhouse:
+    endpoint: tcp://clickhouse:9000?dial_timeout=10s&compress=lz4
+    username: default
+    password: password
+    database: default
+    timeout: 5s
+    retry_on_failure:
+     enabled: true
+     initial_interval: 5s
+     max_interval: 30s
+     max_elapsed_time: 300s
+
+
+extensions:
+  health_check:
+    endpoint: "0.0.0.0:13133"
+  pprof:
+    endpoint: "0.0.0.0:1777"
+  zpages:
+    endpoint: localhost:55679
+
+
+service:
+  extensions: [health_check, pprof]
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [batch, memory_limiter]
+      exporters: [clickhouse, debug]
+    logs:
+      receivers: [otlp]
+      processors: [attributes, batch]
+      exporters: [clickhouse, debug]
+    traces:
+      receivers: [otlp]
+      processors: [attributes, batch, memory_limiter]
+      exporters: [clickhouse, debug]

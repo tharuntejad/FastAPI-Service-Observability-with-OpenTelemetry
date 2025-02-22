@@ -1,0 +1,81 @@
+
+# visit https://www.otelbin.io/ for validating the config
+
+receivers:
+  # Prometheus to scrape metrics from otel-collector itself
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'otel-collector'
+          static_configs:
+            - targets: ["0.0.0.0:8888"]
+  # Receive metrics, traces, and logs via grpc and http
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:4317"
+      http:
+        endpoint: "0.0.0.0:4318"
+
+
+processors:
+  # Process metrics,logs,traces in batch with a timeout of 1s
+  batch:
+    timeout: 1s
+
+  # Limit memory usage to 400MiB with a spike limit of 100MiB
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 400
+    spike_limit_mib: 100
+
+  # Add a severity_text attribute to logs/ used later by loki for log retention policy
+  attributes:
+    actions:
+      - key: severity
+        from_attribute: severity_text
+        action: insert
+
+# [otlp otlphttp file opencensus prometheus zipkin debug nop kafka prometheusremotewrite]
+exporters:
+  # Print the output of the pipeline to stdout
+  debug:
+    verbosity: detailed
+
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+
+  # Export traces to Jaeger
+  otlphttp/jaeger:
+    endpoint: http://jaeger-collector:4318
+
+  # Export logs to Loki (protocol_name/<custom name>(
+  otlphttp/loki:
+    endpoint: http://loki:3100/otlp
+
+
+
+extensions:
+  health_check:
+    endpoint: "0.0.0.0:13133"
+  pprof:
+    endpoint: "0.0.0.0:1777"
+  zpages:
+    endpoint: localhost:55679
+
+
+service:
+  extensions: [health_check, pprof]
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [batch, memory_limiter]
+      exporters: [prometheus, debug]
+    logs:
+      receivers: [otlp]
+      processors: [attributes, batch]
+      exporters: [otlphttp/loki, debug]
+    traces:
+      receivers: [otlp]
+      processors: [attributes, batch, memory_limiter]
+      exporters: [otlphttp/jaeger, debug]
