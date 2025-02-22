@@ -16,7 +16,7 @@ Below is an overview of the project’s structure:
   A sample **FastAPI** service representing an **inventory system**, instrumented with **OpenTelemetry**.  
   👉 Refer to [inventory-service/README.md](inventory-service/README.md) to learn more.
 
-- **clickhouse-1/    (recommended)**:  
+- **clickhouse-1/**:  
   Contains configuration and setup details for using **ClickHouse** as a telemetry backend.  
   👉 Refer to [clickhouse-1/README.md](clickhouse-1/README.md) for more details.
 
@@ -31,7 +31,7 @@ Below is an overview of the project’s structure:
 ## How to Get Started
 
 1. Explore the services (`order-service/`, `inventory-service/`) to understand how OpenTelemetry is integrated.
-2. Choose a backend (`clickhouse-1/`, `prometheus-loki-jaeger-grafana-1/`, or `prometheus-loki-jaeger-grafana-2/`) and follow its README to set up observability.
+2. Choose a backend (`clickhouse-1/` (recommended), `prometheus-loki-jaeger-grafana-1/`, or `prometheus-loki-jaeger-grafana-2/`) and follow its README to set up observability.
 3. Run the services and observe the telemetry data flow through the chosen backend.
 
 ---
