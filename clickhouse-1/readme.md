@@ -21,7 +21,7 @@ Below is the structure of the project, along with a description of what each fil
 └── .gitignore                      # Git ignore file
 ```
 ## System Design
-<img src="System Design.jpg" alt="System Architecture" width="800"/>
+<img src="System Design.jpg" alt="System Architecture"/>
 
 
 ## Components

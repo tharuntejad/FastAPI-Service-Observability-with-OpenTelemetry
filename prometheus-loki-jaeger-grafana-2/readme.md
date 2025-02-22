@@ -33,7 +33,7 @@ This project extends the previous project, `Prometheus-Loki-Jaeger-Grafana-1`, i
 ```
 
 ## System Design
-<img src="System Design.jpg" alt="System Architecture" width="800"/>
+<img src="System Design.jpg" alt="System Architecture"/>
 ## Components
 
 #### 1. FastAPI Services
