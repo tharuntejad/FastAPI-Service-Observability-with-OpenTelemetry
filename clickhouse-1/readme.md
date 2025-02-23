@@ -316,6 +316,11 @@ When it comes to storage, **ClickHouse Cloud** is a highly efficient solution. I
 - **Seamless scalability** to accommodate growing telemetry data without significant overhead.
 
 By leveraging ClickHouse Cloud, you can ensure your observability stack remains performant and manageable as your application scales.
+
+## ⚠️ Collector & ClickHouse Exporter Note
+
+We’re using the `opentelemetry-collector-contrib` image instead of the official OpenTelemetry Collector because it provides a ClickHouse exporter and supports more community features. While this isn’t inherently problematic, some parts of the ClickHouse exporter are still in alpha. They generally work fine, but be cautious when upgrading to a newer version—make sure to thoroughly test all features first. You can track the exporter’s status and updates here: [opentelemetry-collector-contrib](https://github.com/open-telemetry/opentelemetry-collector-contrib).
+
 ## Wrap Up
 
 This document addressed the key challenges of integrating observability into FastAPI services and provided practical solutions for each step of the process. Here's a quick summary of what we covered:
@@ -337,7 +342,8 @@ This document addressed the key challenges of integrating observability into Fas
     
 - **Scaling Out the System:**  
     Best practices for scaling the **OTEL Collector** and **ClickHouse** to meet the demands of larger applications.
-    
+
+- ****    
 By following this guide, you can build a **robust, scalable, and cost-effective observability solution** for FastAPI services, ensuring better visibility, faster troubleshooting, and improved system reliability.
 
 
