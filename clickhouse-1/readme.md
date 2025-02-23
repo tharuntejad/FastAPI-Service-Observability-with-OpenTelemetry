@@ -15,10 +15,13 @@ Below is the structure of the project, along with a description of what each fil
 │   ├── clickhouse/database         # ClickHouse data storage
 │   ├── clickhouse/log              # ClickHouse log storage
 │   └── grafana/data                # Grafana dashboard storage
-├── docker-compose.yml              # Docker Compose file to orchestrate services
-├── commands.md                     # Useful Docker and project commands
+├── commands.md                     # List of all project commands
+├── docker-compose.yml              # Docker Compose file to set up the project
+├── queries.sql                     # Clickhouse query commands
+├── retention_policies.sql          # Clickhouse queries to implement retention policies
 ├── readme.md                       # Main documentation for the project
-└── .gitignore                      # Git ignore file
+└── System Design.jpg               # Design diagram
+
 ```
 
 ## System Design

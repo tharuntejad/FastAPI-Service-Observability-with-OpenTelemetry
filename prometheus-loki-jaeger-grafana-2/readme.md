@@ -24,11 +24,11 @@ This project extends the previous project, `Prometheus-Loki-Jaeger-Grafana-1`, i
 │   ├── prometheus/data             # Prometheus metric storage
 │   ├── minio/data                  # MinIO storage backend for Loki
 │   └── elasticsearch/data          # Elasticsearch storage for Jaeger
-├── docker-compose.yml              # Docker Compose file to orchestrate services
-├── commands.md                     # Useful Docker and project commands
-├── image.png                       # Diagram of the system architecture
+├── commands.md                     # List of all project commands
+├── docker-compose.yml              # Docker Compose file to set up the project
 ├── readme.md                       # Main documentation for the project
-└── .gitignore                      # Git ignore file
+└── System Design.jpg               # Design diagram
+
 ```
 
 ## System Design

@@ -19,10 +19,10 @@ Below is the structure of the project, along with a description of what each fil
 │   ├── grafana/data                # Grafana dashboard storage
 │   ├── loki/data                   # Loki log storage
 │   └── prometheus/data             # Prometheus metric storage
-├── docker-compose.yml              # Docker Compose file to orchestrate services
-├── commands.md                     # Useful Docker and project commands
+├── commands.md                     # List of all project commands
+├── docker-compose.yml              # Docker Compose file to set up the project
 ├── readme.md                       # Main documentation for the project
-└── .gitignore                      # Git ignore file
+└── System Design.jpg               # Design diagram
 
 ```
 
@@ -160,7 +160,7 @@ Starting from **Jaeger v2**, Jaeger no longer provides separate images like `jae
 
 👉 **`jaegertracing/jaeger`**
 
-This image is modular and can be configured via **extensions** to act as a **collector, query, ingestor, or all-in-one**. Here, we are using it as **Jaeger Collector and Query**. 🚀
+This image is modular and can be configured via **extensions** to act as a **collector, query, ingestor, or all-in-one**. Here, we are using it as **Jaeger Collector and Query**.
 Configuration: `./config_volumes/jaeger-all.yaml`, `./config_volumes/jaeger-ui-config.json`
 
 #### 6. Grafana
