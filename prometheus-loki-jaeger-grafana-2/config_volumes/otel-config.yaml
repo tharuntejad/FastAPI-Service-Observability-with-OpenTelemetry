@@ -1,6 +1,4 @@
 
-# visit https://www.otelbin.io/ for validating the config
-
 receivers:
   # Prometheus to scrape metrics from otel-collector itself
   prometheus:
@@ -28,13 +26,6 @@ processors:
     check_interval: 1s
     limit_mib: 400
     spike_limit_mib: 100
-
-  # Add a severity_text attribute to logs/ used later by loki for log retention policy
-  attributes:
-    actions:
-      - key: severity
-        from_attribute: severity_text
-        action: insert
 
 # [otlp otlphttp file opencensus prometheus zipkin debug nop kafka prometheusremotewrite]
 exporters:
