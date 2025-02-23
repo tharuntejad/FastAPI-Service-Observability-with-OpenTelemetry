@@ -211,6 +211,14 @@ Test and save the connection to add this as a data source. Once added, you can e
 #### 7. Viewing Metrics, Logs, and Traces
 Once the project is up and running, you can view the metrics, logs, and traces in two ways:
 
+**Using CURL**
+You can query ClickHouse directly using CURL:
+```bash
+curl --user 'default:password' \
+  --data-binary 'SELECT * from otel_logs limit 5;' \
+  http://localhost:8123
+````
+
 **Using ClickHouse Client**
 Access the ClickHouse container, start the ClickHouse client, and run queries:
 
