@@ -15,8 +15,8 @@ order-service/
 │   ├── core/
 │   │   ├── __init__.py
 │   │   ├── config.py          # Configuration settings
-│   │   ├── dev.env            # Environment file for development
-│   │   └── stage.env          # Environment file for staging
+│   │   ├── dev.env            # Env file when running locally
+│   │   └── stage.env          # Env file running with docker-compose
 │   ├── __init__.py
 │   ├── db.py                  # Database connection and initialization
 │   ├── main.py                # Entry point for FastAPI app
@@ -35,49 +35,46 @@ order-service/
 
 ## Setup Environment
 
-1. Ensure Python 3.11+ is installed.
-2. Set the environment variable `APP_ENV` to one of the following:
-   - `dev` for local development
-   - `stage` for staging
-3. Use the respective `.env` file to configure the environment.
+1. **Install Python 3.11+**  
+   Make sure you have Python 3.11 or a newer version installed.
 
-For example, in `dev.env`:
-```env
-# Name of the service
-service_name = "order-service"
-# Endpoint of OpenTelemetry Collector for exporting telemetry data
-otlp_grpc_endpoint = "http://localhost:4317"
-otlp_http_endpoint = "http://localhost:4318"
-# Inventory service URL
-inventory_service_url = "http://localhost:8010"
-```
-- The `dev.env` file is preconfigured for local development and testing. It does not require any external services to be running.
-- For staging, use the `stage.env` file, which works with the provided `docker-compose.yml` file. This file automatically starts the OpenTelemetry Collector and other backend services.
+2. **Create a virtual environment and install requirements**  
+   ```bash
+   cd order-service
+   python -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   ```
 
----
+3. **Start the Order Service**  
+   ```bash
+   APP_ENV='dev' uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+   ```
 
-## Start the Service
+4. **Set up and start the Inventory Service**  
+   Use another virtual environment if desired, then run:
+   ```bash
+   cd inventory-service
+   python -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   APP_ENV='dev' uvicorn app.main:app --reload --host 0.0.0.0 --port 8010
+   ```
 
-### Local (Development Mode)
+5. **Local Development Note**  
+   The `dev` environment (`APP_ENV=dev` with `dev.env`) is already set up for local use. You don't need to change anything. When running locally using the above commands, the OpenTelemetry collector and other backends are not yet configured, so you may see some warnings. However, the services themselves will work as expected.
 
-Run the service with:
-```bash
-APP_ENV='dev' uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
+6. **Stage Environment**  
+   The `stage` environment (`APP_ENV=stage` with `stage.env`) is also preconfigured and requires no changes. The accompanying `docker-compose.yml` files use this environment to run the services in Docker containers and integrate them with the OpenTelemetry collector and other backends.
 
-> Note: When running locally, you may see warnings because metric, logging, and tracing backends are not configured for development.
 
-### Containerized (Staging Mode)
-
-To run the service with the provided `docker-compose.yml` file, set the environment variable `APP_ENV` to `stage` in the `docker-compose.yml` file.
-
----
-
-## Metrics, Logging, and Tracing
-
-The service integrates with OpenTelemetry for tracing, metrics, and logging, as defined in `app/telemetry.py`. Review the comments in the code for detailed information on the integration.
-
-- **Development Mode**: When running locally, metrics, logs, and traces are generated but not sent to the OpenTelemetry Collector, as it is not running in `dev` mode.
-- **Staging Mode**: When running as part of the provided `docker-compose.yml` file, metrics, logs, and traces are sent to the OpenTelemetry Collector, which then exports them to the respective backends.
-
----
+## Telemetry  
+Check out the following files to see how telemetry metrics, logs, and traces are configured and used:
+- **Configuration**:  
+  - `order-service/telemetry.py`  
+  - `inventory-service/telemetry.py`
+- **Usage**:  
+  - `order-service/main.py`  
+  - `order-service/routes.py`  
+  - `inventory-service/main.py`  
+  - `inventory-service/routes.py`
