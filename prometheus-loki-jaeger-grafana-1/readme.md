@@ -62,87 +62,79 @@ The OpenTelemetry (OTel) Collector receives telemetry data from the services and
 
 ```yaml
 #  `./config_volumes/otel-config.yaml`
-# visit https://www.otelbin.io/ for validating the config  
-  
-receivers:  
-  # Prometheus to scrape metrics from otel-collector itself  
-  prometheus:  
-    config:  
-      scrape_configs:  
-        - job_name: 'otel-collector'  
-          static_configs:  
-            - targets: ["0.0.0.0:8888"]  
-  
-  # Receive metrics, traces, and logs via grpc and http  
-  otlp:  
-    protocols:  
-      grpc:  
-        endpoint: "0.0.0.0:4317"  
-      http:  
-        endpoint: "0.0.0.0:4318"  
-  
-  
-processors:  
-  # Process metrics,logs,traces in batch with a timeout of 1s  
-  batch:  
-    timeout: 1s  
-  
-  # Limit memory usage to 400MiB with a spike limit of 100MiB  
-  memory_limiter:  
-    check_interval: 1s  
-    limit_mib: 400  
-    spike_limit_mib: 100  
-  
-  # Add a severity_text attribute to logs/ used later by loki for log retention policy  
-  attributes:  
-    actions:  
-      - key: severity  
-        from_attribute: severity_text  
-        action: insert  
-  
-# only [otlp otlphttp file opencensus prometheus zipkin debug nop kafka prometheusremotewrite] are supported in official otel-collector  
-exporters:  
-  # Print the output of the pipeline to stdout  
-  debug:  
-    verbosity: detailed  
-  
-  # Export metrics to Prometheus  
-  prometheus:  
-    endpoint: "0.0.0.0:8889"  
-  
-  # Export traces to Jaeger  
-  otlphttp/jaeger:  
-    endpoint: http://jaeger-all:4318  
-  
-  # Export logs to Loki (protocol_name/<custom name>(  
-  otlphttp/loki:  
-    endpoint: http://loki:3100/otlp  
-  
-  
-  
-extensions:  
-  health_check:  
-    endpoint: "0.0.0.0:13133"  
-  pprof:  
-    endpoint: "0.0.0.0:1777"  
-  zpages:  
-    endpoint: localhost:55679  
-  
-  
-service:  
-  extensions: [health_check, pprof]  
-  pipelines:  
-    metrics:  
-      receivers: [otlp]  
-      processors: [batch, memory_limiter]  
-      exporters: [prometheus, debug]  
-    logs:  
-      receivers: [otlp]  
-      processors: [attributes, batch]  
-      exporters: [otlphttp/loki, debug]  
-    traces:  
-      receivers: [otlp]  
-      processors: [attributes, batch, memory_limiter]  
+
+receivers:
+  # Prometheus to scrape metrics from otel-collector itself
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'otel-collector'
+          static_configs:
+            - targets: ["0.0.0.0:8888"]
+
+  # Receive metrics, traces, and logs via grpc and http
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:4317"
+      http:
+        endpoint: "0.0.0.0:4318"
+
+
+processors:
+  # Process metrics,logs,traces in batch with a timeout of 1s
+  batch:
+    timeout: 1s
+
+  # Limit memory usage to 400MiB with a spike limit of 100MiB
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 400
+    spike_limit_mib: 100
+
+# only [otlp otlphttp file opencensus prometheus zipkin debug nop kafka prometheusremotewrite] are supported in official otel-collector
+exporters:
+  # Print the output of the pipeline to stdout
+  debug:
+    verbosity: detailed
+
+  # Export metrics to Prometheus
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+
+  # Export traces to Jaeger
+  otlphttp/jaeger:
+    endpoint: http://jaeger-all:4318
+
+  # Export logs to Loki (protocol_name/<custom name>(
+  otlphttp/loki:
+    endpoint: http://loki:3100/otlp
+
+
+
+extensions:
+  health_check:
+    endpoint: "0.0.0.0:13133"
+  pprof:
+    endpoint: "0.0.0.0:1777"
+  zpages:
+    endpoint: localhost:55679
+
+
+service:
+  extensions: [health_check, pprof]
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [batch, memory_limiter]
+      exporters: [prometheus, debug]
+    logs:
+      receivers: [otlp]
+      processors: [attributes, batch]
+      exporters: [otlphttp/loki, debug]
+    traces:
+      receivers: [otlp]
+      processors: [attributes, batch, memory_limiter]
       exporters: [otlphttp/jaeger, debug]
 ```
 
@@ -177,14 +169,11 @@ Configuration: `./config_volumes/jaeger-all.yaml`, `./config_volumes/jaeger-ui-c
 
 #### 6. Grafana
 
-- Provides a unified dashboard to visualize metrics, logs, and traces.
-- Pre-configured data sources:
-    - Prometheus for metrics.
-    - Loki for logs.
-    - Jaeger for traces.
+- Serves as a unified tool for viewing and visualizing metrics, logs, and traces.  
+- Prometheus, Loki, and Jaeger have already been configured as data sources in Grafana and are directly visible among its data sources.  
 - Accessible on port `3000` with default credentials (`admin:admin`).
 
-Configuration: `./config_volumes/grafana-datasources.yaml`
+- Configuration: `./config_volumes/grafana-datasources.yaml`
 
 ## Setting Up
 
@@ -230,22 +219,22 @@ Configuration: `./config_volumes/grafana-datasources.yaml`
 	- **Grafana**: `http://localhost:3000` login with default credentials `admin` and `admin` visit data sources and explore the pre-configured data sources prometheus, loki, jaeger.  
 
 6. Cleaning up
-```bash  
-  
-# Stop the project  
-docker compose -p ostack down  
-  
-# Delete all data volumes(remove all container related data)  
-sudo chown -R $USER:$USER ./data_volumes  
-rm -rf ./data_volumes/jaeger/data/*  
-rm -rf ./data_volumes/grafana/data/*  
-rm -rf ./data_volumes/loki/data/*  
-rm -rf ./data_volumes/prometheus/data/*  
-  
-# Delete images  
-docker image rm ostack-order-service  
-docker image rm ostack-inventory-service  
-  
+    ```bash  
+      
+    # Stop the project  
+    docker compose -p ostack down  
+      
+    # Delete all data volumes(remove all container related data)  
+    sudo chown -R $USER:$USER ./data_volumes  
+    rm -rf ./data_volumes/jaeger/data/*  
+    rm -rf ./data_volumes/grafana/data/*  
+    rm -rf ./data_volumes/loki/data/*  
+    rm -rf ./data_volumes/prometheus/data/*  
+      
+    # Delete images  
+    docker image rm ostack-order-service  
+    docker image rm ostack-inventory-service  
+      
 ```
 **Note** 
 Visit `commands.md` for more useful commands related to the project.

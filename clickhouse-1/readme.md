@@ -55,14 +55,17 @@ The OpenTelemetry (OTel) Collector receives telemetry data from the services and
 - **Traces**: Sent to ClickHouse.
 
 ```yaml
-# OpenTelemetry Collector Configuration
+#  `./config_volumes/otel-config.yaml`
+
 receivers:
+  # Prometheus to scrape metrics from otel-collector itself
   prometheus:
     config:
       scrape_configs:
         - job_name: 'otel-collector'
           static_configs:
             - targets: ["0.0.0.0:8888"]
+  # Receive metrics, traces, and log via grpc and http
   otlp:
     protocols:
       grpc:
@@ -70,22 +73,24 @@ receivers:
       http:
         endpoint: "0.0.0.0:4318"
 
+
 processors:
+  # Process metrics,log,traces in batch with a timeout of 1s
   batch:
     timeout: 1s
+
+  # Limit memory usage to 400MiB with a spike limit of 100MiB
   memory_limiter:
     check_interval: 1s
     limit_mib: 400
     spike_limit_mib: 100
-  attributes:
-    actions:
-      - key: severity
-        from_attribute: severity_text
-        action: insert
 
 exporters:
+  # Print the output of the pipeline to stdout
   debug:
     verbosity: detailed
+
+  # Export metrics, traces, and logs to clickhouse
   clickhouse:
     endpoint: tcp://clickhouse:9000?dial_timeout=10s&compress=lz4
     username: default
@@ -93,10 +98,10 @@ exporters:
     database: default
     timeout: 5s
     retry_on_failure:
-      enabled: true
-      initial_interval: 5s
-      max_interval: 30s
-      max_elapsed_time: 300s
+     enabled: true
+     initial_interval: 5s
+     max_interval: 30s
+     max_elapsed_time: 300s
 
 extensions:
   health_check:
@@ -121,6 +126,7 @@ service:
       receivers: [otlp]
       processors: [attributes, batch, memory_limiter]
       exporters: [clickhouse, debug]
+
 ```
 
 #### 3. ClickHouse
@@ -226,22 +232,22 @@ Data can be directly queried by opening a shell in the ClickHouse server contain
 		- Start exploring the data by running queries in the **SQL editor**.
 
 8. Cleaning up
-```bash  
-  
-# Stop the project  
-docker compose -p ostack down  
-  
-# Delete all data volumes(remove all container related data)  
-sudo chown -R $USER:$USER ./data_volumes  
-rm -rf ./data_volumes/clickhouse/database/*  
-rm -rf ./data_volumes/clickhouse/log/*  
-rm -rf ./data_volumes/grafana/data/*
-  
-# Delete images  
-docker image rm ostack-order-service  
-docker image rm ostack-inventory-service  
-  
-```
+	```bash  
+	  
+	# Stop the project  
+	docker compose -p ostack down  
+	  
+	# Delete all data volumes(remove all container related data)  
+	sudo chown -R $USER:$USER ./data_volumes  
+	rm -rf ./data_volumes/clickhouse/database/*  
+	rm -rf ./data_volumes/clickhouse/log/*  
+	rm -rf ./data_volumes/grafana/data/*
+	  
+	# Delete images  
+	docker image rm ostack-order-service  
+	docker image rm ostack-inventory-service  
+	  
+	```
 
 **Additional Resources**
 

@@ -104,13 +104,9 @@ The enhanced Jaeger setup comprises:
 
 #### 6. Grafana
 
-- Provides a unified dashboard to visualize metrics, logs, and traces.
-- Pre-configured data sources:
-    - Prometheus for metrics.
-    - Loki for logs.
-    - Jaeger for traces.
+- Serves as a unified tool for viewing and visualizing metrics, logs, and traces.  
+- Prometheus, Loki, and Jaeger have already been configured as data sources in Grafana and are directly visible among its data sources.  
 - Accessible on port `3000` with default credentials (`admin:admin`).
-
 Configuration: `./config_volumes/grafana-datasources.yaml`
 
 ## Setting Up
@@ -159,25 +155,25 @@ Configuration: `./config_volumes/grafana-datasources.yaml`
 	- **MinIO Console**: `http://localhost:9001` login with default credentials `admin` and `password` to manage Loki storage.
 
 6. Cleaning up
-```bash
-# Stop the project  
-docker compose -p ostack down  
-  
-# Delete all data volumes(remove all container related data)  
-sudo chown -R $USER:$USER ./data_volumes  
-rm -rf ./data_volumes/elasticsearch/data/*  
-rm -rf ./data_volumes/grafana/data/*  
-rm -rf ./data_volumes/loki/data/*  
-rm -rf ./data_volumes/minio/data/*  
-rm -rf ./data_volumes/minio/data/.minio.sys  
-rm -rf ./data_volumes/prometheus/data/*  
-  
-  
-# Delete images  
-docker image rm ostack-order-service  
-docker image rm ostack-inventory-service
-
-```
+    ```bash
+    # Stop the project  
+    docker compose -p ostack down  
+      
+    # Delete all data volumes(remove all container related data)  
+    sudo chown -R $USER:$USER ./data_volumes  
+    rm -rf ./data_volumes/elasticsearch/data/*  
+    rm -rf ./data_volumes/grafana/data/*  
+    rm -rf ./data_volumes/loki/data/*  
+    rm -rf ./data_volumes/minio/data/*  
+    rm -rf ./data_volumes/minio/data/.minio.sys  
+    rm -rf ./data_volumes/prometheus/data/*  
+      
+      
+    # Delete images  
+    docker image rm ostack-order-service  
+    docker image rm ostack-inventory-service
+    
+    ```
 
 **Note** 
 Visit `commands.md` for more useful commands related to the project.
