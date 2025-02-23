@@ -209,7 +209,7 @@ Test and save the connection to add this as a data source. Once added, you can e
 
 
 #### 7. Viewing Metrics, Logs, and Traces
-Once the project is up and running, you can view the metrics, logs, and traces in two ways:
+Once the project is up and running, you can view the metrics, logs, and traces in multiple ways:
 
 **Using CURL**
 You can query ClickHouse directly using CURL:
@@ -217,7 +217,7 @@ You can query ClickHouse directly using CURL:
 curl --user 'default:password' \
   --data-binary 'SELECT * from otel_logs limit 5;' \
   http://localhost:8123
-````
+```
 
 **Using ClickHouse Client**
 Access the ClickHouse container, start the ClickHouse client, and run queries:
@@ -284,7 +284,7 @@ MODIFY TTL
 
 This query automatically purges logs after their defined retention periods, ensuring optimal storage utilization without manual intervention.
 
-🔍 _For a detailed explanation of the retention policies, refer to_ [`clickhouse-1/retention_policies.sql`](https://chatgpt.com/c/clickhouse-1/retention_policies.sql).
+🔍 _For a detailed explanation of the retention policies, refer to_`clickhouse-1/retention_policies.sql`.
 
 
 ## Monitoring & Alerts
