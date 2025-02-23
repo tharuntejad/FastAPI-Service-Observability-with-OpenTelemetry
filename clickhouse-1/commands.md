@@ -44,6 +44,22 @@ docker exec -it ostack-order-service sh
 
 ```
 
+### Querying Clickhouse
+```bash
+# Query the ClickHouse database using the HTTP interface
+curl --user 'default:password' \
+  --data-binary 'SELECT * from otel_logs limit 5;' \
+  http://localhost:8123
+
+# or Connect to the ClickHouse client for querying the database  
+docker exec -it ostack-clickhouse-1 clickhouse-client -h localhost --user default --password password
+
+# Once the shell starts, you can query the database using sql commands
+SELECT * from otel_logs limit 5;
+
+# 
+```
+
 ### Cleaning up
 ```bash
 
