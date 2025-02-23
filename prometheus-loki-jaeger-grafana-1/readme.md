@@ -60,6 +60,7 @@ The OpenTelemetry (OTel) Collector receives telemetry data from the services and
 - Logs: Sent to Loki.
 - Traces: Sent to Jaeger.
 
+This is how the open telemetry collector configuration file looks like for current system:
 ```yaml
 #  `./config_volumes/otel-config.yaml`
 

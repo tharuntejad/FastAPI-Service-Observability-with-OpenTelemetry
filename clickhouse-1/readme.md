@@ -59,6 +59,7 @@ The OpenTelemetry (OTel) Collector receives telemetry data from the services and
 - **Logs**: Sent to ClickHouse.
 - **Traces**: Sent to ClickHouse.
 
+This is how the open telemetry collector configuration file looks like for current system:
 ```yaml
 #  `./config_volumes/otel-config.yaml`
 
