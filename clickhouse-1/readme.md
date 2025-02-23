@@ -176,7 +176,7 @@ docker compose -p ostack ps
 #### 5. Access the following services in your browser:
 - **Order Service**: `http://localhost:8000/docs`
 - **Inventory Service**: `http://localhost:8010/docs`
-- **Clickhouse**: `http://localhost:8123`
+- **Clickhouse**: `http://localhost:8123` or `tcp://localhost:9000`
 - **Grafana**: `http://localhost:3000`. Login with default credentials `admin:admin`.
 
 #### 6. Installing the ClickHouse Plugin in Grafana
@@ -189,7 +189,7 @@ By default, Grafana does not include the ClickHouse plugin. You need to install 
 4. Click **Install** (top-right corner).
 5. Once installed, add a new **Data Source** (top-right corner).
 6. Fill in the details:
-	- **Server Address**: `clickhouse` (since our service runs at `http://clickhouse:9000` inside Docker).
+	- **Server Address**: `clickhouse` (since our service runs at `tcp://clickhouse:9000` inside Docker).
 	- **Server Port**: `9000`
 	- **Username**: `default`
 	- **Password**: `password`
