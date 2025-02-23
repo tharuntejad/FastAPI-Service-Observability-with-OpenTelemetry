@@ -31,9 +31,9 @@ docker compose -p ostack ps
 
 # List the no of containers running in the project
 docker compose -p ostack ls
+# 7 out of 7 containers should be running
 
-
-# Check the logs of a service
+# Check the logs of a specific service, replace `order-service` with desired service name
 docker compose -p ostack logs order-service --tail 100
 
 # Check the logs of all services
