@@ -176,7 +176,7 @@ docker compose -p ostack ps
 #### 5. Access the following services in your browser:
 - **Order Service**: `http://localhost:8000/docs`
 - **Inventory Service**: `http://localhost:8010/docs`
-- **Clikchouse**: `http://localhost:8443`
+- **Clickhouse**: `http://localhost:8123`
 - **Grafana**: `http://localhost:3000`. Login with default credentials `admin:admin`.
 
 #### 6. Installing the ClickHouse Plugin in Grafana
