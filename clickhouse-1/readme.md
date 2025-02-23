@@ -211,7 +211,7 @@ Test and save the connection to add this as a data source. Once added, you can e
 #### 7. Viewing Metrics, Logs, and Traces
 Once the project is up and running, you can view the metrics, logs, and traces in two ways:
 
-**1. Using ClickHouse Client**
+**Using ClickHouse Client**
 Access the ClickHouse container, start the ClickHouse client, and run queries:
 
 ```bash
@@ -225,7 +225,7 @@ Once the client starts, run the following query:
 SELECT * FROM otel_logs;  -- Visit queries.sql for more useful queries
 ```
 
-**2. Using Grafana UI**
+**Using Grafana UI**
 	
 Alternatively, you can explore the data via Grafana:
 
