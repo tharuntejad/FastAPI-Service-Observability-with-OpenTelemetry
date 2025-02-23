@@ -6,7 +6,7 @@ This project demonstrates observability in **FastAPI** services using **OpenTele
 ## Project Structure
 
 Below is an overview of the project’s structure:
-- 
+
 - **order-service/**:  
   A simple demo **FastAPI** service representing an **order management system**, instrumented with **OpenTelemetry**.  
   👉 Refer to [order-service/README.md](order-service/README.md) for more information.
@@ -26,7 +26,6 @@ Below is an overview of the project’s structure:
   - [prometheus-loki-jaeger-grafana-1/README.md](prometheus-loki-jaeger-grafana-1/README.md)  
   - [prometheus-loki-jaeger-grafana-2/README.md](prometheus-loki-jaeger-grafana-2/README.md)  
 
----
 
 ## How to Get Started
 
@@ -34,8 +33,6 @@ Below is an overview of the project’s structure:
 2. Explore the services (`order-service/`, `inventory-service/`) to understand how OpenTelemetry is integrated.
 3. Run the services and observe the telemetry data flow through the chosen backend.
 
----
 
 Each subdirectory contains a dedicated **README.md** with step-by-step instructions. Be sure to visit those files for comprehensive setup details. 😊
 
----

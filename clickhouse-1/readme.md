@@ -1,10 +1,10 @@
 
 ## FastAPI Service Observability with OpenTelemetry - Otel Collector, ClickHouse & Grafana
 
-
 Observability provides deep insights into the internal state of an application by analyzing metrics, logs, and traces. It enables faster issue detection, improved performance monitoring, and efficient troubleshooting, ensuring systems remain reliable, scalable, and user-friendly.
 
 This project showcases how observability—encompassing metrics, logs, and traces—can be seamlessly integrated into FastAPI services using OpenTelemetry. It also covers the collection, storage, monitoring, and visualization of telemetry data with the help of the OTEL Collector, ClickHouse, and Grafana.
+
 ## Directory Structure
 Below is the structure of the project, along with a description of what each file and folder represents.
 ```
@@ -20,6 +20,7 @@ Below is the structure of the project, along with a description of what each fil
 ├── readme.md                       # Main documentation for the project
 └── .gitignore                      # Git ignore file
 ```
+
 ## System Design
 <img src="System Design.jpg" alt="System Architecture"/>
 
@@ -31,17 +32,18 @@ Below is the structure of the project, along with a description of what each fil
 Current project includes two sample FastAPI services—**Order Service** and **Inventory Service**—designed to generate telemetry data for demonstration purposes.
 Below are the endpoints for each service and their respective functionalities:
 
-- **Order Service**: Handles the placement of orders.
+**Order Service**: Handles the placement of orders.
     
-    - `/health`: Endpoint for health checks.
-    - `/list-orders`: List all orders.
-    - `/list-products`: Interacts with the inventory service to list available products.
-    - `/order-product`: Place an order for a product.
-- **Inventory Service**: Manages the inventory of products.
+- `/health`: Endpoint for health checks.
+- `/list-orders`: List all orders.
+- `/list-products`: Interacts with the inventory service to list available products.
+- `/order-product`: Place an order for a product.
+
+**Inventory Service**: Manages the inventory of products.
     
-    - `/health`: Endpoint for health checks.
-    - `/list-products`: List all available products and their stock levels.
-    - `/reduce-stock`: Reduces stock for a product.
+- `/health`: Endpoint for health checks.
+- `/list-products`: List all available products and their stock levels.
+- `/reduce-stock`: Reduces stock for a product.
 
 
 Refer to the documentation in `order-service/readme.md` and `inventory-service/readme.md` to learn how telemetry is integrated into FastaAPI services.
@@ -136,10 +138,7 @@ ClickHouse serves as a scalable, high-performance backend for observability data
 
 Data can be directly queried by opening a shell in the ClickHouse server container and using the ClickHouse client. However, using Grafana makes visualization easier.
 
-- **Accessible on port `3000`** with default credentials (`admin:admin`).
-
 ## Setting Up
-
 
 #### 1. Clone the repository:
     
@@ -151,11 +150,11 @@ cd prometheus-loki-jaeger-grafana-1
 #### 2. Create required directories & grant permissions on files & folders:
     
 ```bash
-  mkdir -p ./data_volumes/clickhouse/database
-  mkdir -p ./data_volumes/clickhouse/log
-  mkdir -p ./data_volumes/grafana/data
-  sudo chmod -R 777 ./data_volumes
-  sudo chmod -R 777 ./config_volumes
+mkdir -p ./data_volumes/clickhouse/database
+mkdir -p ./data_volumes/clickhouse/log
+mkdir -p ./data_volumes/grafana/data
+sudo chmod -R 777 ./data_volumes
+sudo chmod -R 777 ./config_volumes
 ```
 
 #### 3. Start the stack using Docker Compose:
@@ -209,26 +208,27 @@ Test and save the connection to add this as a data source. Once added, you can e
 #### 7. Viewing Metrics, Logs, and Traces
 Once the project is up and running, you can view the metrics, logs, and traces in two ways:
 
-1. **Using ClickHouse Client**
-   Access the ClickHouse container, start the ClickHouse client, and run queries:
+**1. Using ClickHouse Client**
+Access the ClickHouse container, start the ClickHouse client, and run queries:
+
+```bash
+# Connect to the ClickHouse client for querying the database  
+docker exec -it ostack-clickhouse-1 clickhouse-client -h localhost --user default --password password
+```
+
+Once the client starts, run the following query:
+
+```bash
+SELECT * FROM otel_logs;  -- Visit queries.sql for more useful queries
+```
+
+**2. Using Grafana UI**
 	
-   ```bash
-   # Connect to the ClickHouse client for querying the database  
-   docker exec -it ostack-clickhouse-1 clickhouse-client -h localhost --user default --password password
-   ```
-	
-   Once the client starts, run the following query:
-	
-   ```sql
-   SELECT * FROM otel_logs;  -- Visit queries.sql for more useful queries
-   ```
-2. **Using Grafana UI**
-	
-   Alternatively, you can explore the data via Grafana:
-	
-   - Install the **ClickHouse plugin** in Grafana.
-   - Add ClickHouse as a **data source**.
-   - Start exploring the data by running queries in the **SQL editor**.
+Alternatively, you can explore the data via Grafana:
+
+- Install the **ClickHouse plugin** in Grafana.
+- Add ClickHouse as a **data source**.
+- Start exploring the data by running queries in the **SQL editor**.
 
 #### 8. Cleaning up
 ```bash  
@@ -342,8 +342,7 @@ This document addressed the key challenges of integrating observability into Fas
     
 - **Scaling Out the System:**  
     Best practices for scaling the **OTEL Collector** and **ClickHouse** to meet the demands of larger applications.
-
-- ****    
+ 
 By following this guide, you can build a **robust, scalable, and cost-effective observability solution** for FastAPI services, ensuring better visibility, faster troubleshooting, and improved system reliability.
 
 
