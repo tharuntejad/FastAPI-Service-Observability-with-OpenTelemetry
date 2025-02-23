@@ -200,7 +200,7 @@ If using **ClickHouse Cloud** instead of a local ClickHouse server (container):
 
 - Get the connection details `Username, Password & URL`from the **Connect** section of the ClickHouse Cloud UI.
 - The **URL** might look like `https://<id><region>.aws.clickhouse.cloud:8443`.
-- Set **Server Adddress** to `<id><region>.aws.clickhouse.cloud`
+- Set **Server Address** to `<id><region>.aws.clickhouse.cloud`
 - Set **Server Port** to `8443`.
 - Switch **Protocol** from `Native` to `HTTP`.
 - Toggle **Secure Connection**.
