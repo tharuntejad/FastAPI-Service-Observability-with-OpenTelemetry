@@ -80,7 +80,6 @@ receivers:
       http:
         endpoint: "0.0.0.0:4318"
 
-
 processors:
   # Process metrics,logs,traces in batch with a timeout of 1s
   batch:
@@ -110,8 +109,6 @@ exporters:
   otlphttp/loki:
     endpoint: http://loki:3100/otlp
 
-
-
 extensions:
   health_check:
     endpoint: "0.0.0.0:13133"
@@ -119,7 +116,6 @@ extensions:
     endpoint: "0.0.0.0:1777"
   zpages:
     endpoint: localhost:55679
-
 
 service:
   extensions: [health_check, pprof]
@@ -130,11 +126,11 @@ service:
       exporters: [prometheus, debug]
     logs:
       receivers: [otlp]
-      processors: [attributes, batch]
+      processors: [batch]
       exporters: [otlphttp/loki, debug]
     traces:
       receivers: [otlp]
-      processors: [attributes, batch, memory_limiter]
+      processors: [batch, memory_limiter]
       exporters: [otlphttp/jaeger, debug]
 ```
 

@@ -73,7 +73,6 @@ receivers:
       http:
         endpoint: "0.0.0.0:4318"
 
-
 processors:
   # Process metrics,log,traces in batch with a timeout of 1s
   batch:
@@ -120,11 +119,11 @@ service:
       exporters: [clickhouse, debug]
     logs:
       receivers: [otlp]
-      processors: [attributes, batch]
+      processors: [batch]
       exporters: [clickhouse, debug]
     traces:
       receivers: [otlp]
-      processors: [attributes, batch, memory_limiter]
+      processors: [batch, memory_limiter]
       exporters: [clickhouse, debug]
 
 ```

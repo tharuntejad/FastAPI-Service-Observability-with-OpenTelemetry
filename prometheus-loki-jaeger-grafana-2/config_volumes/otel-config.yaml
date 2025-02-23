@@ -27,6 +27,7 @@ processors:
     limit_mib: 400
     spike_limit_mib: 100
 
+
 # [otlp otlphttp file opencensus prometheus zipkin debug nop kafka prometheusremotewrite]
 exporters:
   # Print the output of the pipeline to stdout
@@ -43,7 +44,6 @@ exporters:
   # Export logs to Loki (protocol_name/<custom name>(
   otlphttp/loki:
     endpoint: http://loki:3100/otlp
-
 
 
 extensions:
@@ -64,9 +64,9 @@ service:
       exporters: [prometheus, debug]
     logs:
       receivers: [otlp]
-      processors: [attributes, batch]
+      processors: [batch]
       exporters: [otlphttp/loki, debug]
     traces:
       receivers: [otlp]
-      processors: [attributes, batch, memory_limiter]
+      processors: [batch, memory_limiter]
       exporters: [otlphttp/jaeger, debug]

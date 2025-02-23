@@ -27,6 +27,7 @@ processors:
     limit_mib: 400
     spike_limit_mib: 100
 
+
 exporters:
   # Print the output of the pipeline to stdout
   debug:
@@ -64,9 +65,9 @@ service:
       exporters: [clickhouse, debug]
     logs:
       receivers: [otlp]
-      processors: [attributes, batch]
+      processors: [batch]
       exporters: [clickhouse, debug]
     traces:
       receivers: [otlp]
-      processors: [attributes, batch, memory_limiter]
+      processors: [batch, memory_limiter]
       exporters: [clickhouse, debug]
