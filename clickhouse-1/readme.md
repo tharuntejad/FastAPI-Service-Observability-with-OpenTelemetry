@@ -141,114 +141,114 @@ Data can be directly queried by opening a shell in the ClickHouse server contain
 ## Setting Up
 
 
-1. Clone the repository:
+#### 1. Clone the repository:
     
-    ```bash
-    git clone <repository_url>
-    cd prometheus-loki-jaeger-grafana-1
-    ```
-    
-2. Create required directories & grant permissions on files & folders:
-    
-    ```bash
-      mkdir -p ./data_volumes/clickhouse/database
-      mkdir -p ./data_volumes/clickhouse/log
-      mkdir -p ./data_volumes/grafana/data
-      sudo chmod -R 777 ./data_volumes
-      sudo chmod -R 777 ./config_volumes
-    ```
-    
-3. Start the stack using Docker Compose:
-    
-    ```bash
-    docker compose -p ostack up -d --build
-    ```
-    
-4. Verify that all services are running:
-    
-    ```bash
-    docker compose -p ostack ps
-    # 5 out of 5 containers should be running
-    ```
-    
-5. Access the following services in your browser:
-	- **Order Service**: `http://localhost:8000/docs`
-	- **Inventory Service**: `http://localhost:8010/docs`
-	- **Clikchouse**: `http://localhost:8443`
-    - **Grafana**: `http://localhost:3000`. Login with default credentials `admin:admin`.
+```bash
+git clone <repository_url>
+cd prometheus-loki-jaeger-grafana-1
+```
 
-6. Installing the ClickHouse Plugin in Grafana
+#### 2. Create required directories & grant permissions on files & folders:
+    
+```bash
+  mkdir -p ./data_volumes/clickhouse/database
+  mkdir -p ./data_volumes/clickhouse/log
+  mkdir -p ./data_volumes/grafana/data
+  sudo chmod -R 777 ./data_volumes
+  sudo chmod -R 777 ./config_volumes
+```
 
-	By default, Grafana does not include the ClickHouse plugin. You need to install it manually:
+#### 3. Start the stack using Docker Compose:
+    
+```bash
+docker compose -p ostack up -d --build
+```
+    
+#### 4. Verify that all services are running:
+    
+```bash
+docker compose -p ostack ps
+# 5 out of 5 containers should be running
+```
+
+#### 5. Access the following services in your browser:
+- **Order Service**: `http://localhost:8000/docs`
+- **Inventory Service**: `http://localhost:8010/docs`
+- **Clikchouse**: `http://localhost:8443`
+- **Grafana**: `http://localhost:3000`. Login with default credentials `admin:admin`.
+
+#### 6. Installing the ClickHouse Plugin in Grafana
+
+By default, Grafana does not include the ClickHouse plugin. You need to install it manually:
+
+1. Navigate to **Administration -> Plugins and data -> Plugins**.
+2. Search for **ClickHouse**.
+3. Select the **official ClickHouse plugin** from Grafana.
+4. Click **Install** (top-right corner).
+5. Once installed, add a new **Data Source** (top-right corner).
+6. Fill in the details:
+	- **Server Address**: `clickhouse` (since our service runs at `http://clickhouse:9000` inside Docker).
+	- **Server Port**: `9000`
+	- **Username**: `default`
+	- **Password**: `password`
+	- **Protocol**: `Native`
+	- **Secure Connection**: Disable the secure connection since we are using HTTP instead of HTTPS.
+
+If using **ClickHouse Cloud** instead of a local ClickHouse server (container):
+
+- Get the connection details `Username, Password & URL`from the **Connect** section of the ClickHouse Cloud UI.
+- The **URL** might look like `https://<id><region>.aws.clickhouse.cloud:8443`.
+- Set **Server Adddress** to `<id><region>.aws.clickhouse.cloud`
+- Set **Server Port** to `8443`.
+- Switch **Protocol** from `Native` to `HTTP`.
+- Toggle **Secure Connection**.
+- Set the retrieved **Username** and **Password** accordingly.
+Test and save the connection to add this as a data source. Once added, you can explore and query ClickHouse by navigating to **Datasources** → **Newly Added ClickHouse Datasource** → **Explore**.
+
+
+#### 7. Viewing Metrics, Logs, and Traces
+Once the project is up and running, you can view the metrics, logs, and traces in two ways:
+
+1. **Using ClickHouse Client**
+   Access the ClickHouse container, start the ClickHouse client, and run queries:
 	
-	1. Navigate to **Administration -> Plugins and data -> Plugins**.
-	2. Search for **ClickHouse**.
-	3. Select the **official ClickHouse plugin** from Grafana.
-	4. Click **Install** (top-right corner).
-	5. Once installed, add a new **Data Source** (top-right corner).
-	6. Fill in the details:
-	    - **Server Address**: `clickhouse` (since our service runs at `http://clickhouse:9000` inside Docker).
-	    - **Server Port**: `9000`
-	    - **Username**: `default`
-	    - **Password**: `password`
-	    - **Protocol**: `Native`
-	    - **Secure Connection**: Disable the secure connection since we are using HTTP instead of HTTPS.
+   ```bash
+   # Connect to the ClickHouse client for querying the database  
+   docker exec -it ostack-clickhouse-1 clickhouse-client -h localhost --user default --password password
+   ```
 	
-	If using **ClickHouse Cloud** instead of a local ClickHouse server (container):
+   Once the client starts, run the following query:
 	
-	- Get the connection details `Username, Password & URL`from the **Connect** section of the ClickHouse Cloud UI.
-	- The **URL** might look like `https://<id><region>.aws.clickhouse.cloud:8443`.
-	- Set **Server Adddress** to `<id><region>.aws.clickhouse.cloud`
-	- Set **Server Port** to `8443`.
-	- Switch **Protocol** from `Native` to `HTTP`.
-	- Toggle **Secure Connection**.
-	- Set the retrieved **Username** and **Password** accordingly.
-	Test and save the connection to add this as a data source. Once added, you can explore and query ClickHouse by navigating to **Datasources** → **Newly Added ClickHouse Datasource** → **Explore**.
-
-
-7. Viewing Metrics, Logs, and Traces
-	Once the project is up and running, you can view the metrics, logs, and traces in two ways:
+   ```sql
+   SELECT * FROM otel_logs;  -- Visit queries.sql for more useful queries
+   ```
+2. **Using Grafana UI**
 	
-	 1. **Using ClickHouse Client**
-		Access the ClickHouse container, start the ClickHouse client, and run queries:
-		
-		```bash
-		# Connect to the ClickHouse client for querying the database  
-		docker exec -it ostack-clickhouse-1 clickhouse-client -h localhost --user default --password password
-		```
-		
-		Once the client starts, run the following query:
-		
-		```sql
-		SELECT * FROM otel_logs;  -- Visit queries.sql for more useful queries
-		```
-	 2. **Using Grafana UI**
-		
-		Alternatively, you can explore the data via Grafana:
-		
-		- Install the **ClickHouse plugin** in Grafana.
-		- Add ClickHouse as a **data source**.
-		- Start exploring the data by running queries in the **SQL editor**.
+   Alternatively, you can explore the data via Grafana:
+	
+   - Install the **ClickHouse plugin** in Grafana.
+   - Add ClickHouse as a **data source**.
+   - Start exploring the data by running queries in the **SQL editor**.
 
-8. Cleaning up
-	```bash  
-	  
-	# Stop the project  
-	docker compose -p ostack down  
-	  
-	# Delete all data volumes(remove all container related data)  
-	sudo chown -R $USER:$USER ./data_volumes  
-	rm -rf ./data_volumes/clickhouse/database/*  
-	rm -rf ./data_volumes/clickhouse/log/*  
-	rm -rf ./data_volumes/grafana/data/*
-	  
-	# Delete images  
-	docker image rm ostack-order-service  
-	docker image rm ostack-inventory-service  
-	  
-	```
+#### 8. Cleaning up
+```bash  
+  
+# Stop the project  
+docker compose -p ostack down  
+  
+# Delete all data volumes(remove all container related data)  
+sudo chown -R $USER:$USER ./data_volumes  
+rm -rf ./data_volumes/clickhouse/database/*  
+rm -rf ./data_volumes/clickhouse/log/*  
+rm -rf ./data_volumes/grafana/data/*
+  
+# Delete images  
+docker image rm ostack-order-service  
+docker image rm ostack-inventory-service  
+  
+```
 
-**Additional Resources**
+#### **Additional Resources**
 
 - Visit `commands.md` for useful commands related to the project.
 - Visit `queries.sql` for useful queries related to ClickHouse.
