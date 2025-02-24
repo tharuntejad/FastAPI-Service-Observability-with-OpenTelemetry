@@ -9,25 +9,28 @@ This project extends the previous project, `Prometheus-Loki-Jaeger-Grafana-1`, i
 **Directory Structure**
 ```
 ./
-├── config_volumes/                  # Configuration files for various services
-│   ├── grafana-datasources.yaml    # Grafana data source configuration
-│   ├── jaeger-collector.yaml       # Jaeger Collector configuration
-│   ├── jaeger-query.yaml           # Jaeger Query configuration
-│   ├── jaeger-ui-config.json       # Jaeger UI-specific configuration
-│   ├── loki-config.yaml            # Loki configuration
-│   ├── otel-config.yaml            # OpenTelemetry Collector configuration
-│   └── prometheus.yml              # Prometheus scrape configuration
-├── data_volumes/                   # Data storage directories for services
-│   ├── jaeger/data                 # Jaeger trace storage in Elasticsearch
-│   ├── grafana/data                # Grafana dashboard storage
-│   ├── loki/data                   # Loki log storage (via MinIO)
-│   ├── prometheus/data             # Prometheus metric storage
-│   ├── minio/data                  # MinIO storage backend for Loki
-│   └── elasticsearch/data          # Elasticsearch storage for Jaeger
-├── commands.md                     # List of all project commands
-├── docker-compose.yml              # Docker Compose file to set up the project
-├── readme.md                       # Main documentation for the project
-└── System Design.jpg               # Design diagram
+├── order-service/                      # Demo FastAPI service
+├── inventory-service/                  # Demo FastAPI service
+└── prometheus-loki-jaeger-grafana-2/   # Project for integrating otel-collector, prometheus, loki, jaeger & grafana as observability backend for above services
+    ├── config_volumes/                 # Config files for various services mounted as volumes
+    │   ├── grafana-datasources.yaml    # Grafana data source configuration
+    │   ├── jaeger-collector.yaml       # Jaeger Collector configuration
+    │   ├── jaeger-query.yaml           # Jaeger Query configuration
+    │   ├── jaeger-ui-config.json       # Jaeger UI-specific configuration
+    │   ├── loki-config.yaml            # Loki configuration
+    │   ├── otel-config.yaml            # OpenTelemetry Collector configuration
+    │   └── prometheus.yml              # Prometheus scrape configuration
+    ├── data_volumes/                   # Mount volumes for persisting container data
+    │   ├── jaeger/data                 # Jaeger trace storage in Elasticsearch
+    │   ├── grafana/data                # Grafana dashboard storage
+    │   ├── loki/data                   # Loki log storage (via MinIO)
+    │   ├── prometheus/data             # Prometheus metric storage
+    │   ├── minio/data                  # MinIO storage backend for Loki
+    │   └── elasticsearch/data          # Elasticsearch storage for Jaeger
+    ├── commands.md                     # List of all project commands
+    ├── docker-compose.yml              # Docker Compose file to set up the project
+    ├── readme.md                       # Main documentation for the project
+    └── System Design.jpg               # Design diagram
 
 ```
 

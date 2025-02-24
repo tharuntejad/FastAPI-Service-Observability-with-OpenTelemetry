@@ -9,18 +9,21 @@ This project showcases how observability—encompassing metrics, logs, and trace
 Below is the structure of the project, along with a description of what each file and folder represents.
 ```
 ./
-├── config_volumes/                 # Configuration files for various services
-│   └── otel-config.yaml            # OpenTelemetry Collector configuration
-├── data_volumes/                   # Data storage directories for services
-│   ├── clickhouse/database         # ClickHouse data storage
-│   ├── clickhouse/log              # ClickHouse log storage
-│   └── grafana/data                # Grafana dashboard storage
-├── commands.md                     # List of all project commands
-├── docker-compose.yml              # Docker Compose file to set up the project
-├── queries.sql                     # Clickhouse query commands
-├── retention_policies.sql          # Clickhouse queries to implement retention policies
-├── readme.md                       # Main documentation for the project
-└── System Design.jpg               # Design diagram
+├── order-service/                      # Demo FastAPI service
+├── inventory-service/                  # Demo FastAPI service
+└── clickhouse-1/                       # Project for integrating otel-collector, clickhouse & grafana as observability backend for above services
+    ├── config_volumes/                 # Config files for various services mounted as volumes
+    │   └── otel-config.yaml            # OpenTelemetry Collector configuration
+    ├── data_volumes/                   # Mount volumes for persisting container data
+    │   ├── clickhouse/database         # ClickHouse data storage
+    │   ├── clickhouse/log              # ClickHouse log storage
+    │   └── grafana/data                # Grafana dashboard storage
+    ├── commands.md                     # List of all project commands
+    ├── docker-compose.yml              # Docker Compose file to set up the project
+    ├── queries.sql                     # Clickhouse query commands
+    ├── retention_policies.sql          # Clickhouse queries to implement retention policies
+    ├── readme.md                       # Main documentation for the project
+    └── System Design.jpg               # Design diagram
 
 ```
 

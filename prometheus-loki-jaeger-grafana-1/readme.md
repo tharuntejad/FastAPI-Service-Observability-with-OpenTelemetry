@@ -7,22 +7,25 @@ This project is a demonstration of an observability stack that integrates Promet
 Below is the structure of the project, along with a description of what each file and folder represents.
 ```
 ./
-├── config_volumes/                  # Configuration files for various services
-│   ├── grafana-datasources.yaml    # Grafana data source configuration
-│   ├── jaeger-all.yaml             # Jaeger configuration for traces
-│   ├── jaeger-ui-config.json       # Jaeger UI-specific configuration
-│   ├── loki-config.yaml            # Loki configuration
-│   ├── otel-config.yaml            # OpenTelemetry Collector configuration
-│   └── prometheus.yml              # Prometheus scrape configuration
-├── data_volumes/                   # Data storage directories for services
-│   ├── jaeger/data                 # Jaeger trace storage
-│   ├── grafana/data                # Grafana dashboard storage
-│   ├── loki/data                   # Loki log storage
-│   └── prometheus/data             # Prometheus metric storage
-├── commands.md                     # List of all project commands
-├── docker-compose.yml              # Docker Compose file to set up the project
-├── readme.md                       # Main documentation for the project
-└── System Design.jpg               # Design diagram
+├── order-service/                      # Demo FastAPI service
+├── inventory-service/                  # Demo FastAPI service
+└── prometheus-loki-jaeger-grafana-1/   # Project for integrating otel-collector, prometheus, loki, jaeger & grafana as observability backend for above services
+    ├── config_volumes/                 # Config files for various services mounted as volumes
+    │   ├── grafana-datasources.yaml    # Grafana data source configuration
+    │   ├── jaeger-all.yaml             # Jaeger configuration for traces
+    │   ├── jaeger-ui-config.json       # Jaeger UI-specific configuration
+    │   ├── loki-config.yaml            # Loki configuration
+    │   ├── otel-config.yaml            # OpenTelemetry Collector configuration
+    │   └── prometheus.yml              # Prometheus scrape configuration
+    ├── data_volumes/                   # Mount volumes for persisting container data
+    │   ├── jaeger/data                 # Jaeger trace storage
+    │   ├── grafana/data                # Grafana dashboard storage
+    │   ├── loki/data                   # Loki log storage
+    │   └── prometheus/data             # Prometheus metric storage
+    ├── commands.md                     # List of all project commands
+    ├── docker-compose.yml              # Docker Compose file to set up the project
+    ├── readme.md                       # Main documentation for the project
+    └── System Design.jpg               # Design diagram
 
 ```
 
