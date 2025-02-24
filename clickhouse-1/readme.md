@@ -151,7 +151,7 @@ Data can be directly queried by opening a shell in the ClickHouse server contain
     
 ```bash
 git clone <repository_url>
-cd prometheus-loki-jaeger-grafana-1
+cd clickhouse-1
 ```
 
 #### 2. Create required directories & grant permissions on files & folders:
@@ -181,7 +181,7 @@ docker compose -p ostack ps
 - **Order Service**: `http://localhost:8000/docs`
 - **Inventory Service**: `http://localhost:8010/docs`
 - **Clickhouse**: `http://localhost:8123` or `tcp://localhost:9000`
-- **Grafana**: `http://localhost:3000`. Login with default credentials `admin:admin`.
+- **Grafana**: `http://localhost:3000`. login with default credentials `admin` and `admin`.
 
 #### 6. Installing the ClickHouse Plugin in Grafana
 
